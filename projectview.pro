@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = projectviewer
+TARGET = projectview
 INCLUDEPATH += .
 
 QT += gui widgets
@@ -7,9 +7,11 @@ QT += gui widgets
 SOURCES += \
     main.cpp \
     parser.cpp \
+    projectview.cpp \
 
 HEADERS += \
     parser.h \
+    projectview.h \
 
 RESOURCES += \
     icons/projectviewer/icons.qrc \

@@ -1,5 +1,4 @@
 #include <QDebug>
-#include <QTreeView>
 #include <QApplication>
 #include <QList>
 #include <QVariant>
@@ -8,24 +7,7 @@
 
 
 #include "parser.h"
-
-void expandChildren(const QModelIndex &index, QTreeView *view)
-{
-    if (!index.isValid()) {
-        return;
-    }
-
-    int childCount = index.model()->rowCount(index);
-    for (int i = 0; i < childCount; i++) {
-        const QModelIndex &child = index.child(i, 0);
-        expandChildren(child, view);
-    }
-
-    if (!(bool) view->isExpanded(index)) {
-        view->expand(index);
-    }
-}
-
+#include "projectview.h"
 
 
 int main(int argc, char *argv[])
@@ -87,13 +69,16 @@ int main(int argc, char *argv[])
     file.open(QFile::ReadOnly);
     QString style = file.readAll();
 
-    QTreeView *tree= new QTreeView();
+    ProjectView *tree= new ProjectView();
     tree->setModel(p.getModel());
     tree->header()->hide();
     tree->setStyleSheet(style);
     tree->show();
 
 //    expandChildren(p.getModel()->index(0,0), tree);
+//    QModelIndex index = tree->selectedIndexes()[0];
+//    QStandardItem * item = index.model().itemFromIndex(index);
+//    qDebug()
 
 
     app.exec();

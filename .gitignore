@@ -33,4 +33,4 @@ Makefile*
 *.qmlproject.user
 *.qmlproject.user.*
 
-/projectviewer
+/projectview
