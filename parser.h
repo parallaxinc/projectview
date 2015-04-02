@@ -6,12 +6,34 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 
+#include <QIcon>
+#include <QColor>
+#include <QVariant>
+
 
 class Parser
 {
+public:
+    struct Pattern
+    {
+        QString regex;
+        QList<QVariant> capture; // int and string
+    };
+
+    struct Rule
+    {
+        QString name;
+        QList<Pattern> patterns;
+        QIcon icon;
+        QColor color;
+    };
+
 private:
-    QStandardItemModel * flatmodel;
-    QStandardItemModel * treemodel;
+    bool caseInsensitive;
+
+    QList<Rule> rules;
+
+    QStandardItemModel * model;
     QStandardItem * flatroot;
     QStandardItem * treeroot;
     QList<QStringList> fileList;
@@ -29,13 +51,18 @@ public:
     ~Parser();
     void setFile(const QString & filename);
     void setLibraryPaths(QStringList paths);
-    QStringList getDependencies(const QString & name);
-    QStringList getFunctions(const QString & name);
-    QStringList getConstants(const QString & name);
     void clearFileList();
     void appendFileList(const QString & name);
     void buildModel();
-    QStandardItemModel * flatModel();
-    QStandardItemModel * treeModel();
+    QStandardItemModel * getModel();
+    void setCaseInsensitive(bool enabled);
+
+
+    QList<Rule> getRules();
+    void clearRules();
+    void addRule(QString name, QList<Pattern> patterns, QIcon icon = QIcon(), QColor color = QColor());
+    QStringList matchRule(const QString & name, const QString & text);
+    QStringList matchRuleFromFile(const QString & name, const QString & filename);
+    QStringList matchPattern(Pattern pattern, const QString & text);
 };
 

@@ -13,28 +13,23 @@
 
 Parser::Parser()
 {
-    treemodel = 0;
-    treeroot  = 0;
+    caseInsensitive = false;
 
-    flatmodel = 0;
-    flatroot  = 0;
+    model = 0;
 }
 
 Parser::~Parser()
 {
-    if (treemodel)
-        delete treemodel;
+    if (model)
+        delete model;
 
-    if (flatmodel)
-        delete flatmodel;
-
-    treemodel = 0;
-    treeroot  = 0;
-
-    flatmodel = 0;
-    flatroot  = 0;
+    model = 0;
 }
 
+void Parser::setCaseInsensitive(bool enabled)
+{
+    caseInsensitive = enabled;
+}
 
 
 void Parser::setFile(const QString & name)
@@ -70,7 +65,7 @@ void Parser::clearFileList()
 
 void Parser::appendFileList(const QString & name)
 {
-    QStringList dependencies = getDependencies(name);
+    QStringList dependencies = matchRuleFromFile("_includes_", name);
 
     fileList.clear();
     for (int i = 0; i < searchPaths.size(); i++)
@@ -117,89 +112,109 @@ int Parser::findFileIndex(const QString & name)
     return -1;
 }
 
-QStringList Parser::getConstants(const QString & name)
+QStringList Parser::matchPattern(Pattern pattern, const QString & text)
 {
-    QFile f(name);
-    f.open(QFile::ReadOnly);
-    QString s = f.readAll();
-    f.close();
+    QStringList result;
 
-    QRegularExpression re("^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*=[ \t]*[0-9]+[ \t]*$");
-    re.setPatternOptions(
-            QRegularExpression::MultilineOption |
-            QRegularExpression::CaseInsensitiveOption);
+    QRegularExpression re(pattern.regex);
 
-    QRegularExpressionMatchIterator match = re.globalMatch(s);
-
-    QStringList list;
-
+    int options = QRegularExpression::MultilineOption;
+    if (caseInsensitive)
+        options |= QRegularExpression::CaseInsensitiveOption;
+    re.setPatternOptions((QRegularExpression::PatternOptions) options);
+    
+    QRegularExpressionMatchIterator match = re.globalMatch(text);
     while (match.hasNext())
     {
         QRegularExpressionMatch m = match.next();
-        list << m.captured(1);
+
+        QString capture;
+        
+        foreach (QVariant v, pattern.capture)
+        {
+            QMetaType::Type t = (QMetaType::Type) v.type();
+            if (t == QMetaType::Int)
+            {
+                capture += m.captured(v.toInt());
+            }
+            else if (t == QMetaType::QString)
+            {
+                capture += v.toString();
+            }
+        }
+        result << capture;
     }
 
-    return list;
+    return result;
 }
 
-
-QStringList Parser::getFunctions(const QString & name)
+QStringList Parser::matchRuleFromFile(const QString & name, const QString & filename)
 {
-    QFile f(name);
+    QFile f(filename);
     f.open(QFile::ReadOnly);
     QString s = f.readAll();
     f.close();
-
-    QRegularExpression re("^(PUB|PRI)[ \t]+([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*(\\(.*\\))?(\\|.*|:.*)?.*$");
-    re.setPatternOptions(
-            QRegularExpression::MultilineOption |
-            QRegularExpression::CaseInsensitiveOption);
-
-    QRegularExpressionMatchIterator match = re.globalMatch(s);
-
-    QStringList list;
-
-    while (match.hasNext())
-    {
-        QRegularExpressionMatch m = match.next();
-        list << (m.captured(2) + " " + m.captured(3));
-    }
-
-    return list;
+    return matchRule(name, s);
 }
 
-QStringList Parser::getDependencies(const QString & name)
+QStringList Parser::matchRule(const QString & name, const QString & text)
 {
-    QFile f(name);
-    f.open(QFile::ReadOnly);
-    QString s = f.readAll();
-    f.close();
+    QStringList result;
 
-    QRegularExpression re("^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*:[ \t]*\"(.*?)(.spin)?\"$");
-    re.setPatternOptions(
-            QRegularExpression::MultilineOption |
-            QRegularExpression::CaseInsensitiveOption);
-
-    QRegularExpressionMatchIterator match = re.globalMatch(s);
-
-    QStringList list;
-
-    while (match.hasNext())
+    foreach (Rule r, rules)
     {
-        QRegularExpressionMatch m = match.next();
-        list << m.captured(2) + ".spin";
+        if (!r.name.compare(name))
+        {
+            foreach (Pattern p, r.patterns)
+            {
+                result.append(matchPattern(p, text));
+            }
+        }
     }
 
-    return list;
+    return result;
+}
+
+void Parser::addRule(QString name, QList<Pattern> patterns, QIcon icon, QColor color)
+{
+    // test if rule already defined; if so, use that rule instead
+    QList<Rule>::iterator i;
+    for (i = rules.begin(); i != rules.end(); i++)
+    {
+        if (!i->name.compare(name))
+        {
+            i->patterns.append(patterns);
+            return;
+        }
+    }
+
+    Rule r;
+
+    r.name = name;
+    r.patterns = patterns;
+    r.icon = icon;
+    r.color = color;
+
+    rules.append(r);
+}
+
+QList<Parser::Rule> Parser::getRules()
+{
+    return rules;
+}
+
+void Parser::clearRules()
+{
+    rules.clear();
 }
 
 void Parser::buildModel()
 {
-    if (treemodel)
-        delete treemodel;
+    if (model)
+        delete model;
 
-    treemodel = new QStandardItemModel(); 
-    treeroot = treemodel->invisibleRootItem();
+    model = new QStandardItemModel(); 
+    QStandardItem * root = model->invisibleRootItem();
 
     QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),QFileInfo(filename).fileName());
     QMap<QString, QVariant> data;
@@ -212,19 +227,7 @@ void Parser::buildModel()
     font.setBold(true);
     item->setFont(font);
 
-
-    treeroot->appendRow(item);
-
-    if (flatmodel)
-        delete flatmodel;
-
-    flatmodel = new QStandardItemModel();
-    flatroot = treemodel->invisibleRootItem();
-
-//    for (int i = 0 ; i < searchPaths.size(); i++)
-//    {
-//        QStandardItem * path = new QStandardItem(QIcon(":/icons/projectviewer/block-obj.png"),QFileInfo(filename).fileName());
-//    }
+    root->appendRow(item);
 
     appendModel(item, filename);
 }
@@ -237,7 +240,7 @@ bool Parser::detectCircularReference(QStandardItem * item)
         if (!QString::compare(
                 parent->data().toMap()["file"].toString(),
                 item->data().toMap()["file"].toString(),
-                Qt::CaseInsensitive
+                (Qt::CaseSensitivity) (!caseInsensitive)
             ))
         {
             qDebug() << "CIRCULAR DEPENDENCY";
@@ -265,52 +268,43 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 {
     QList<QStandardItem *> items;
 
-
-    // display functions
-    foreach (QString function, getFunctions(name))
+    foreach (Rule r, rules)
     {
-        QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/block-pub.png"),function);
-        item->setEditable(false);
-        item->setForeground(QBrush(QColor("#0000FF")));
-
-        parentItem->appendRow(item);
-    }
-
-    // display constants
-    foreach (QString con, getConstants(name))
-    {
-        QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/block-con.png"),con);
-        item->setEditable(false);
-        item->setForeground(QBrush(QColor("#7F7F00")));
-
-        parentItem->appendRow(item);
-    }
-
-    foreach (QString dep, getDependencies(name))
-    {
-        // tree view
-        QMap<QString, QVariant> data;
-        QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/block-obj.png"),dep);
-
-        QString fulldep = findFileName(dep);
-        if (fulldep.isEmpty())
+        if (QString::compare(r.name, "_includes_"))
         {
-            item->setText(item->text() + " (NOT FOUND)");
-            item->setForeground(QBrush(QColor("#FF0000")));
+            foreach (QString text, matchRuleFromFile(r.name, name))
+            {
+                QStandardItem * item = new QStandardItem(r.icon, text);
+                item->setEditable(false);
+                item->setForeground(QBrush(r.color));
+
+                parentItem->appendRow(item);
+            }
         }
-        dep = fulldep;
-        data["file"] = dep;
+        else
+        {
+            foreach (QString dep, matchRuleFromFile("_includes_", name))
+            {
+                QMap<QString, QVariant> data;
+                QStandardItem * item = new QStandardItem(r.icon, dep);
 
-        item->setData(QVariant(data));
-        item->setEditable(false);
+                QString fulldep = findFileName(dep);
+                if (fulldep.isEmpty())
+                {
+                    item->setText(item->text() + " (NOT FOUND)");
+                    item->setForeground(QBrush(QColor("#FF0000")));
+                }
+                dep = fulldep;
+                data["file"] = dep;
 
-        items.append(item);
+                item->setData(QVariant(data));
+                item->setEditable(false);
 
-        // flat view
-
-//        QStandardItem * flatitem = new QStandardItem(QIcon(":/icons/projectviewer/block-obj.png"),dep);
-//        int pathindex = findFileIndex(dep);
+                items.append(item);
+            }
+        }
     }
+
     parentItem->appendRows(items);
 
     foreach (QStandardItem * item, items)
@@ -323,11 +317,10 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 }
 
 
-QStandardItemModel * Parser::flatModel()
+QStandardItemModel * Parser::getModel()
 {
-    return flatmodel;
+    if (model == 0)
+        model = new QStandardItemModel();
+
+    return model;
 }
-QStandardItemModel * Parser::treeModel()
-{
-    return treemodel;
-};
