@@ -41,6 +41,7 @@ private:
     QString filename;
     QStringList libraryPaths;
     QStringList searchPaths;
+    QStringList wordList;
 
     void setSearchPaths();
     int findFileIndex(const QString & name);
@@ -58,6 +59,7 @@ public:
     QStandardItemModel * treeModel();
     QStandardItemModel * searchModel();
     void setCaseInsensitive(bool enabled);
+    QStringList getWordList();
 
 
     QList<Rule> getRules();

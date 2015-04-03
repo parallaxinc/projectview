@@ -15,13 +15,14 @@ class ProjectFilter : public QSortFilterProxyModel
         const QStandardItemModel * model = (QStandardItemModel * ) sourceModel();
         const QModelIndex & index = model->index(source_row, 0, source_parent);
 
-
         QStandardItem * item = model->itemFromIndex(index);
+        
+        if (!item->parent())
+            return true;
 
         if (item->hasChildren())
         {
             int childCount = model->rowCount(index);
-//            qDebug() << childCount;
             for (int i = 0; i < childCount; i++)
             {
                 if (filterAcceptsRow(i, index))
@@ -31,8 +32,6 @@ class ProjectFilter : public QSortFilterProxyModel
 
         bool result = model->data(index).toString().contains(filterRegExp());
 
-//        qDebug() << source_parent << source_row << item 
-//            << result;
         return result;
     }
 public:
@@ -52,6 +51,7 @@ class ProjectView : public QWidget
 private:
     Ui::ProjectView ui;
     ProjectFilter proxy;
+    bool eventFilter(QObject *target, QEvent *event);
 
 public:
     explicit ProjectView(QWidget *parent = 0);
@@ -63,6 +63,6 @@ public:
     void setModel(QStandardItemModel * model);
 
 public slots:
-    void printStuff();
+    void changeView();
 };
 

@@ -78,7 +78,7 @@ void Parser::appendFileList(const QString & name)
         fileList[fileindex].append(dependency);
     }
 
-    qDebug() << fileList;
+//    qDebug() << fileList;
 }
 
 QString Parser::findFileName(const QString & name)
@@ -212,6 +212,8 @@ void Parser::buildModel()
     if (model)
         delete model;
 
+    wordList.clear();
+
     model = new QStandardItemModel(); 
     QStandardItem * root = model->invisibleRootItem();
 
@@ -266,7 +268,7 @@ bool Parser::detectCircularReference(QStandardItem * item)
 void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 {
     QList<QStandardItem *> items;
-    qDebug() << parentItem->row() << parentItem->text();
+//    qDebug() << parentItem->row() << parentItem->text();
 
     foreach (Rule r, rules)
     {
@@ -280,6 +282,7 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
                 item->setData(text);
 
                 parentItem->appendRow(item);
+                wordList.append(item->text());
             }
         }
         else
@@ -302,6 +305,7 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
                 item->setEditable(false);
 
                 items.append(item);
+                wordList.append(item->text());
             }
         }
     }
@@ -324,4 +328,9 @@ QStandardItemModel * Parser::treeModel()
         model = new QStandardItemModel();
 
     return model;
+}
+
+QStringList Parser::getWordList()
+{
+    return wordList;
 }

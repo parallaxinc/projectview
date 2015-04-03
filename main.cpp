@@ -67,12 +67,12 @@ int main(int argc, char *argv[])
             QColor("#7F7F00"));
     p.addRule("_includes_",_includes_);
 
-    QStringList x = p.matchRule("constants", s);
+//    QStringList x = p.matchRule("constants", s);
 
-    foreach (QString y, x)
-    {
-        qDebug() << y;
-    }
+//    foreach (QString y, x)
+//    {
+//        qDebug() << y;
+//    }
 
     p.setLibraryPaths(QStringList() << "../../../");
     //    p.setFile("../../Pikemanz/00_Pikemanz.spin");
@@ -80,21 +80,16 @@ int main(int argc, char *argv[])
     //    p.appendFileList("../../Pikemanz/00_Pikemanz.spin");
 
     p.setFile("../../Pikemanz/00_Pikemanz.spin");
-    p.setFile("../../../LameLCD.spin");
+    //p.setFile("../../../games/Brettris/Brettris.spin");
     //    p.setFile("../piXel.spin");
     p.buildModel();
 
-    qDebug() << "STUFF";
+//    qDebug() << "STUFF";
+//    qDebug() << p.getWordList();
 
     ProjectView *tree= new ProjectView();
     tree->setModel(p.treeModel());
     tree->show();
-
-    tree->expandChildren(p.treeModel()->index(0,0), true);
-//    QModelIndex index = tree->selectedIndexes()[0];
-//    QStandardItem * item = index.model().itemFromIndex(index);
-//    qDebug()
-
 
     app.exec();
 }
