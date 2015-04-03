@@ -80,20 +80,17 @@ int main(int argc, char *argv[])
     //    p.appendFileList("../../Pikemanz/00_Pikemanz.spin");
 
     p.setFile("../../Pikemanz/00_Pikemanz.spin");
+    p.setFile("../../../LameLCD.spin");
     //    p.setFile("../piXel.spin");
     p.buildModel();
 
-    QFile file(":/icons/projectviewer/style.qss");
-    file.open(QFile::ReadOnly);
-    QString style = file.readAll();
+    qDebug() << "STUFF";
 
     ProjectView *tree= new ProjectView();
     tree->setModel(p.treeModel());
-    tree->header()->hide();
-    tree->setStyleSheet(style);
     tree->show();
 
-//    expandChildren(p.getModel()->index(0,0), tree);
+    tree->expandChildren(p.treeModel()->index(0,0), true);
 //    QModelIndex index = tree->selectedIndexes()[0];
 //    QStandardItem * item = index.model().itemFromIndex(index);
 //    qDebug()

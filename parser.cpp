@@ -266,6 +266,7 @@ bool Parser::detectCircularReference(QStandardItem * item)
 void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 {
     QList<QStandardItem *> items;
+    qDebug() << parentItem->row() << parentItem->text();
 
     foreach (Rule r, rules)
     {
@@ -276,6 +277,7 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
                 QStandardItem * item = new QStandardItem(r.icon, text);
                 item->setEditable(false);
                 item->setForeground(QBrush(r.color));
+                item->setData(text);
 
                 parentItem->appendRow(item);
             }

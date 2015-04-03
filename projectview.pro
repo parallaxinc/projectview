@@ -13,5 +13,8 @@ HEADERS += \
     parser.h \
     projectview.h \
 
+FORMS += \
+    projectview.ui \
+
 RESOURCES += \
     icons/projectviewer/icons.qrc \
