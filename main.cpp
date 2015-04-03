@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 
     QList<Parser::Pattern> constants;
     QList<Parser::Pattern> functions;
+    QList<Parser::Pattern> privatefunctions;
     QList<Parser::Pattern> _includes_;
 
     Parser::Pattern c1;
@@ -31,19 +32,36 @@ int main(int argc, char *argv[])
     c1.capture << 1;
     constants.append(c1);
 
+    Parser::Pattern c2;
+    c2.regex = "^[ \t]*#[0-9_]+[ \t]*,(([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*,[ \t]*)*([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*)+).*$";
+    c2.capture << 1;
+    constants.append(c2);
+
+
+    QString freg = "[ \t]+([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*(\\(.*\\))?(\\|.*|:.*)?.*$";
+
     Parser::Pattern f1;
-    f1.regex = "^(PUB|PRI)[ \t]+([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*(\\(.*\\))?(\\|.*|:.*)?.*$";
+    f1.regex = "^(PUB)"+freg;
     f1.capture << 2 << " " << 3;
     functions.append(f1);
+
+    Parser::Pattern f2;
+    f2.regex = "^(PRI)"+freg;
+    f2.capture << 2 << " " << 3;
+    privatefunctions.append(f2);
 
     Parser::Pattern d1;
     d1.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*:[ \t]*\"(.*?)(.spin)?\"$";
     d1.capture << 2 << ".spin";
     _includes_.append(d1);
 
-    p.addRule("functions",functions,
+    p.addRule("public",functions,
             QIcon(":/icons/projectviewer/block-pub.png"),
             QColor("#0000FF"));
+    p.addRule("private",privatefunctions,
+            QIcon(":/icons/projectviewer/block-pri.png"),
+            QColor("#007FFF"));
+
     p.addRule("constants",constants,
             QIcon(":/icons/projectviewer/block-con.png"),
             QColor("#7F7F00"));
@@ -70,7 +88,7 @@ int main(int argc, char *argv[])
     QString style = file.readAll();
 
     ProjectView *tree= new ProjectView();
-    tree->setModel(p.getModel());
+    tree->setModel(p.treeModel());
     tree->header()->hide();
     tree->setStyleSheet(style);
     tree->show();

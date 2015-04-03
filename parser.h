@@ -10,6 +10,8 @@
 #include <QColor>
 #include <QVariant>
 
+#include <QRegularExpression>
+
 
 class Parser
 {
@@ -18,6 +20,7 @@ public:
     {
         QString regex;
         QList<QVariant> capture; // int and string
+        QRegularExpression::PatternOptions flags;
     };
 
     struct Rule
@@ -34,8 +37,6 @@ private:
     QList<Rule> rules;
 
     QStandardItemModel * model;
-    QStandardItem * flatroot;
-    QStandardItem * treeroot;
     QList<QStringList> fileList;
     QString filename;
     QStringList libraryPaths;
@@ -54,7 +55,8 @@ public:
     void clearFileList();
     void appendFileList(const QString & name);
     void buildModel();
-    QStandardItemModel * getModel();
+    QStandardItemModel * treeModel();
+    QStandardItemModel * searchModel();
     void setCaseInsensitive(bool enabled);
 
 

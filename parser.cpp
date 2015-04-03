@@ -4,7 +4,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QRegularExpression>
 #include <QStringList>
 #include <QStringListIterator>
 #include <QBrush>
@@ -142,7 +141,7 @@ QStringList Parser::matchPattern(Pattern pattern, const QString & text)
                 capture += v.toString();
             }
         }
-        result << capture;
+        result << capture.simplified();
     }
 
     return result;
@@ -317,7 +316,7 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 }
 
 
-QStandardItemModel * Parser::getModel()
+QStandardItemModel * Parser::treeModel()
 {
     if (model == 0)
         model = new QStandardItemModel();
