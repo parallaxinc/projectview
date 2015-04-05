@@ -46,18 +46,16 @@ for the string you extract from the source file.
 Each rule can hold multiple patterns for languages that support multiple
 variations of a syntax with the same meaning.
 
+### Adding patterns
+
 Rules are created by passing a list of patterns to the `addRule` function,
 so let's create a list of patterns.
-So let's create a rule.
 
 ```cpp
 QList<Parser::Pattern> patterns;
 ```
 
-### Adding patterns
-
-A Rule contains a list of `Parser::Pattern` structures. To start,
-we create a Pattern.
+Then, we create a Pattern.
 
 ```cpp
 Parser::Pattern pattern;

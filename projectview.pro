@@ -1,11 +1,11 @@
-TEMPLATE = app
+TEMPLATE = lib
+CONFIG += staticlib
 TARGET = projectview
 INCLUDEPATH += .
 
 QT += gui widgets
 
 SOURCES += \
-    main.cpp \
     parser.cpp \
     projectview.cpp \
 
@@ -17,4 +17,4 @@ FORMS += \
     projectview.ui \
 
 RESOURCES += \
-    icons/projectviewer/icons.qrc \
+    icons/projectview/projectview.qrc \

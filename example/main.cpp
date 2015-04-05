@@ -17,11 +17,6 @@ int main(int argc, char *argv[])
     Parser p;
     p.setCaseInsensitive(true);
 
-    QFile f("../../../LameAudio.spin");
-    f.open(QFile::ReadOnly);
-    QString s = f.readAll();
-    f.close();
-
     QList<Parser::Pattern> constants;
     QList<Parser::Pattern> functions;
     QList<Parser::Pattern> privatefunctions;
@@ -36,7 +31,6 @@ int main(int argc, char *argv[])
     c2.regex = "^[ \t]*#[0-9_]+[ \t]*,(([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*,[ \t]*)*([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*)+).*$";
     c2.capture << 1;
     constants.append(c2);
-
 
     QString freg = "[ \t]+([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*(\\(.*\\))?(\\|.*|:.*)?.*$";
 
@@ -67,25 +61,9 @@ int main(int argc, char *argv[])
             QColor("#7F7F00"));
     p.addRule("_includes_",_includes_);
 
-//    QStringList x = p.matchRule("constants", s);
-
-//    foreach (QString y, x)
-//    {
-//        qDebug() << y;
-//    }
-
-    p.setLibraryPaths(QStringList() << "../../../");
-    //    p.setFile("../../Pikemanz/00_Pikemanz.spin");
-    //    p.clearFileList();
-    //    p.appendFileList("../../Pikemanz/00_Pikemanz.spin");
-
-    p.setFile("../../Pikemanz/00_Pikemanz.spin");
-    //p.setFile("../../../games/Brettris/Brettris.spin");
-    //    p.setFile("../piXel.spin");
+//    p.setLibraryPaths(QStringList() << "../../../lamestation-sdk");
+    p.setFile("FrappyBard/FrappyBard.spin");
     p.buildModel();
-
-//    qDebug() << "STUFF";
-//    qDebug() << p.getWordList();
 
     ProjectView *tree= new ProjectView();
     tree->setModel(p.treeModel());

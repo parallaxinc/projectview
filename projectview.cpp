@@ -7,8 +7,6 @@
 
 #include <QRegExp>
 #include <QKeyEvent>
-#include <QCompleter>
-
 
 ProjectView::ProjectView(QWidget *parent)
     : QWidget(parent)
