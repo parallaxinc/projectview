@@ -6,11 +6,11 @@ INCLUDEPATH += .
 QT += gui widgets
 
 SOURCES += \
-    parser.cpp \
+    projectparser.cpp \
     projectview.cpp \
 
 HEADERS += \
-    parser.h \
+    projectparser.h \
     projectview.h \
 
 FORMS += \

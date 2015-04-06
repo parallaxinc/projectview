@@ -6,11 +6,11 @@ QT += gui widgets
 
 SOURCES += \
     main.cpp \
-    ../parser.cpp \
+    ../projectparser.cpp \
     ../projectview.cpp \
 
 HEADERS += \
-    ../parser.h \
+    ../projectparser.h \
     ../projectview.h \
 
 FORMS += \

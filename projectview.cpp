@@ -23,12 +23,18 @@ ProjectView::ProjectView(QWidget *parent)
             &proxy, SLOT(setFilterRegExp(const QString &)));
     connect(ui.search,SIGNAL(textChanged(const QString &)),
             this, SLOT(changeView()));
+    connect(ui.view,SIGNAL(clicked(QModelIndex)),this,SLOT(clicked(QModelIndex)));
 
     installEventFilter(this);
 }
 
 ProjectView::~ProjectView()
 {
+}
+
+void ProjectView::clicked(QModelIndex index)
+{
+    qDebug() << ui.view->model()->data(index).toString().replace(" ",".*?");
 }
 
 void ProjectView::changeView()

@@ -13,7 +13,7 @@
 #include <QRegularExpression>
 
 
-class Parser
+class ProjectParser
 {
 public:
     struct Pattern
@@ -49,8 +49,8 @@ private:
     bool detectCircularReference(QStandardItem * item);
     void appendModel(QStandardItem * parentItem, const QString & name);
 public:
-    Parser();
-    ~Parser();
+    ProjectParser();
+    ~ProjectParser();
     void setFile(const QString & filename);
     void setLibraryPaths(QStringList paths);
     void clearFileList();

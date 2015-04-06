@@ -6,7 +6,7 @@
 #include <QFile>
 
 
-#include "parser.h"
+#include "projectparser.h"
 #include "projectview.h"
 
 
@@ -14,37 +14,37 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Parser p;
+    ProjectParser p;
     p.setCaseInsensitive(true);
 
-    QList<Parser::Pattern> constants;
-    QList<Parser::Pattern> functions;
-    QList<Parser::Pattern> privatefunctions;
-    QList<Parser::Pattern> _includes_;
+    QList<ProjectParser::Pattern> constants;
+    QList<ProjectParser::Pattern> functions;
+    QList<ProjectParser::Pattern> privatefunctions;
+    QList<ProjectParser::Pattern> _includes_;
 
-    Parser::Pattern c1;
+    ProjectParser::Pattern c1;
     c1.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*=[ \t]*(.+?)('.*?)?[ \t]*$";
     c1.capture << 1;
     constants.append(c1);
 
-    Parser::Pattern c2;
+    ProjectParser::Pattern c2;
     c2.regex = "^[ \t]*#[0-9_]+[ \t]*,(([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*,[ \t]*)*([ \t]*[a-zA-Z_]+[a-zA-Z0-9_]*[ \t]*)+).*$";
     c2.capture << 1;
     constants.append(c2);
 
     QString freg = "[ \t]+([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*(\\(.*\\))?(\\|.*|:.*)?.*$";
 
-    Parser::Pattern f1;
+    ProjectParser::Pattern f1;
     f1.regex = "^(PUB)"+freg;
     f1.capture << 2 << " " << 3;
     functions.append(f1);
 
-    Parser::Pattern f2;
+    ProjectParser::Pattern f2;
     f2.regex = "^(PRI)"+freg;
     f2.capture << 2 << " " << 3;
     privatefunctions.append(f2);
 
-    Parser::Pattern d1;
+    ProjectParser::Pattern d1;
     d1.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*:[ \t]*\"(.*?)(.spin)?\"$";
     d1.capture << 2 << ".spin";
     _includes_.append(d1);

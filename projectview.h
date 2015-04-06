@@ -64,5 +64,6 @@ public:
 
 public slots:
     void changeView();
+    void clicked(QModelIndex index);
 };
 

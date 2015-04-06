@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "projectparser.h"
 
 #include <QDebug>
 #include <QFile>
@@ -10,14 +10,14 @@
 #include <QColor>
 
 
-Parser::Parser()
+ProjectParser::ProjectParser()
 {
     caseInsensitive = false;
 
     model = 0;
 }
 
-Parser::~Parser()
+ProjectParser::~ProjectParser()
 {
     if (model)
         delete model;
@@ -25,25 +25,25 @@ Parser::~Parser()
     model = 0;
 }
 
-void Parser::setCaseInsensitive(bool enabled)
+void ProjectParser::setCaseInsensitive(bool enabled)
 {
     caseInsensitive = enabled;
 }
 
 
-void Parser::setFile(const QString & name)
+void ProjectParser::setFile(const QString & name)
 {
     filename = name;
     setSearchPaths();
 }
 
-void Parser::setLibraryPaths(QStringList paths)
+void ProjectParser::setLibraryPaths(QStringList paths)
 {
     libraryPaths = paths;
     setSearchPaths();
 }
 
-void Parser::setSearchPaths()
+void ProjectParser::setSearchPaths()
 {
     searchPaths.clear();
 
@@ -57,12 +57,12 @@ void Parser::setSearchPaths()
     qDebug() << "PATHS" << searchPaths;
 }
 
-void Parser::clearFileList()
+void ProjectParser::clearFileList()
 {
     fileList.clear();
 }
 
-void Parser::appendFileList(const QString & name)
+void ProjectParser::appendFileList(const QString & name)
 {
     QStringList dependencies = matchRuleFromFile("_includes_", name);
 
@@ -81,7 +81,7 @@ void Parser::appendFileList(const QString & name)
 //    qDebug() << fileList;
 }
 
-QString Parser::findFileName(const QString & name)
+QString ProjectParser::findFileName(const QString & name)
 {
     int pathindex = findFileIndex(name);
     if (pathindex > -1)
@@ -90,7 +90,7 @@ QString Parser::findFileName(const QString & name)
         return QString();
 }
 
-int Parser::findFileIndex(const QString & name)
+int ProjectParser::findFileIndex(const QString & name)
 {
     QString path;
     int pathindex = 0;
@@ -111,7 +111,7 @@ int Parser::findFileIndex(const QString & name)
     return -1;
 }
 
-QStringList Parser::matchPattern(Pattern pattern, const QString & text)
+QStringList ProjectParser::matchPattern(Pattern pattern, const QString & text)
 {
     QStringList result;
 
@@ -147,7 +147,7 @@ QStringList Parser::matchPattern(Pattern pattern, const QString & text)
     return result;
 }
 
-QStringList Parser::matchRuleFromFile(const QString & name, const QString & filename)
+QStringList ProjectParser::matchRuleFromFile(const QString & name, const QString & filename)
 {
     QFile f(filename);
     f.open(QFile::ReadOnly);
@@ -156,7 +156,7 @@ QStringList Parser::matchRuleFromFile(const QString & name, const QString & file
     return matchRule(name, s);
 }
 
-QStringList Parser::matchRule(const QString & name, const QString & text)
+QStringList ProjectParser::matchRule(const QString & name, const QString & text)
 {
     QStringList result;
 
@@ -174,7 +174,7 @@ QStringList Parser::matchRule(const QString & name, const QString & text)
     return result;
 }
 
-void Parser::addRule(QString name, QList<Pattern> patterns, QIcon icon, QColor color)
+void ProjectParser::addRule(QString name, QList<Pattern> patterns, QIcon icon, QColor color)
 {
     // test if rule already defined; if so, use that rule instead
     QList<Rule>::iterator i;
@@ -197,17 +197,17 @@ void Parser::addRule(QString name, QList<Pattern> patterns, QIcon icon, QColor c
     rules.append(r);
 }
 
-QList<Parser::Rule> Parser::getRules()
+QList<ProjectParser::Rule> ProjectParser::getRules()
 {
     return rules;
 }
 
-void Parser::clearRules()
+void ProjectParser::clearRules()
 {
     rules.clear();
 }
 
-void Parser::buildModel()
+void ProjectParser::buildModel()
 {
     if (model)
         delete model;
@@ -233,7 +233,7 @@ void Parser::buildModel()
     appendModel(item, filename);
 }
 
-bool Parser::detectCircularReference(QStandardItem * item)
+bool ProjectParser::detectCircularReference(QStandardItem * item)
 {
     QStandardItem * parent = item->parent();
     while (parent != 0)
@@ -265,7 +265,7 @@ bool Parser::detectCircularReference(QStandardItem * item)
     return false;
 }
 
-void Parser::appendModel(QStandardItem * parentItem, const QString & name)
+void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name)
 {
     QList<QStandardItem *> items;
 //    qDebug() << parentItem->row() << parentItem->text();
@@ -322,7 +322,7 @@ void Parser::appendModel(QStandardItem * parentItem, const QString & name)
 }
 
 
-QStandardItemModel * Parser::treeModel()
+QStandardItemModel * ProjectParser::treeModel()
 {
     if (model == 0)
         model = new QStandardItemModel();
@@ -330,7 +330,7 @@ QStandardItemModel * Parser::treeModel()
     return model;
 }
 
-QStringList Parser::getWordList()
+QStringList ProjectParser::getWordList()
 {
     return wordList;
 }
