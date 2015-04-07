@@ -5,6 +5,8 @@
 #include <QHeaderView>
 #include <QFile>
 
+#include <QPalette>
+#include <QColor>
 
 #include "projectparser.h"
 #include "projectview.h"
@@ -50,14 +52,14 @@ int main(int argc, char *argv[])
     _includes_.append(d1);
 
     p.addRule("public",functions,
-            QIcon(":/icons/projectviewer/block-pub.png"),
+            QIcon(":/icons/projectview/block-pub.png"),
             QColor("#0000FF"));
     p.addRule("private",privatefunctions,
-            QIcon(":/icons/projectviewer/block-pri.png"),
+            QIcon(":/icons/projectview/block-pri.png"),
             QColor("#007FFF"));
 
     p.addRule("constants",constants,
-            QIcon(":/icons/projectviewer/block-con.png"),
+            QIcon(":/icons/projectview/block-con.png"),
             QColor("#7F7F00"));
     p.addRule("_includes_",_includes_);
 
@@ -68,6 +70,18 @@ int main(int argc, char *argv[])
     ProjectView *tree= new ProjectView();
     tree->setModel(p.treeModel());
     tree->show();
+
+    tree->updateColors(QColor("#24003B"));
+    p.styleRule("public",QIcon(),QColor( "#9595FE"));
+    p.styleRule("private",QIcon(),QColor("#9595FE"));
+    p.styleRule("constants",QIcon(),QColor("#EDEDED"));
+    p.styleRule("_includes_",QIcon(),QColor("#FFFFFF"));
+
+    QFont font = QFont("Monospace");
+    font.setPointSize(12);
+
+    p.setFont(font);
+    p.buildModel();
 
     app.exec();
 }

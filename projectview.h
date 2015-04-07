@@ -65,6 +65,7 @@ public:
 public slots:
     void changeView();
     void clicked(QModelIndex index);
+    void updateColors(QColor background = QColor(), QFont font = QFont());
 
 signals:
     void showFileLine(QString filename, int linenumber);

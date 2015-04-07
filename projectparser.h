@@ -39,11 +39,12 @@ public:
     };
 
 private:
+    QFont font;
     bool caseInsensitive;
 
     QList<Rule> rules;
 
-    QStandardItemModel * model;
+    QStandardItemModel model;
     QList<QStringList> fileList;
     QString filename;
     QStringList libraryPaths;
@@ -64,7 +65,6 @@ public:
     void appendFileList(const QString & name);
     void buildModel();
     QStandardItemModel * treeModel();
-    QStandardItemModel * searchModel();
     void setCaseInsensitive(bool enabled);
     QStringList getWordList();
 
@@ -72,6 +72,8 @@ public:
     QList<Rule> getRules();
     void clearRules();
     void addRule(QString name, QList<Pattern> patterns, QIcon icon = QIcon(), QColor color = QColor());
+    void styleRule(QString name, QIcon icon = QIcon(), QColor color = QColor());
+    void setFont(QFont font);
     QList<Match> matchRule(const QString & name, const QString & text);
     QList<Match> matchRuleFromFile(const QString & name, const QString & filename);
     QList<Match> matchPattern(Pattern pattern, const QString & text);

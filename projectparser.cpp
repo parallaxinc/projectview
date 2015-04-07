@@ -13,16 +13,15 @@
 ProjectParser::ProjectParser()
 {
     caseInsensitive = false;
-
-    model = 0;
 }
 
 ProjectParser::~ProjectParser()
 {
-    if (model)
-        delete model;
+}
 
-    model = 0;
+void ProjectParser::setFont(QFont font)
+{
+    this->font = font;
 }
 
 void ProjectParser::setCaseInsensitive(bool enabled)
@@ -177,6 +176,20 @@ QList<ProjectParser::Match> ProjectParser::matchRule(const QString & name, const
     return result;
 }
 
+void ProjectParser::styleRule(QString name, QIcon icon, QColor color)
+{
+    QList<Rule>::iterator i;
+    for (i = rules.begin(); i != rules.end(); i++)
+    {
+        if (!i->name.compare(name))
+        {
+            if (!icon.isNull())  i->icon = icon;
+            if (color.isValid()) i->color = color;
+            return;
+        }
+    }
+}
+
 void ProjectParser::addRule(QString name, QList<Pattern> patterns, QIcon icon, QColor color)
 {
     // test if rule already defined; if so, use that rule instead
@@ -212,18 +225,14 @@ void ProjectParser::clearRules()
 
 void ProjectParser::buildModel()
 {
-    if (model)
-        delete model;
-
     wordList.clear();
-
-    model = new QStandardItemModel(); 
+    model.clear();
 
     QFileInfo fi(filename);
     if (!fi.exists() || !fi.isFile())
         return;
 
-    QStandardItem * root = model->invisibleRootItem();
+    QStandardItem * root = model.invisibleRootItem();
 
     QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),fi.fileName());
     QMap<QString, QVariant> data;
@@ -232,8 +241,10 @@ void ProjectParser::buildModel()
     item->setData(QVariant(data));
     item->setEditable(false);
 
-    QFont font = item->font();
-    font.setBold(true);
+    foreach (Rule r, rules)
+        if (QString::compare(r.name, "_includes_"))
+            item->setForeground(QBrush(r.color));
+
     item->setFont(font);
 
     root->appendRow(item);
@@ -291,7 +302,10 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
                 QStandardItem * item = new QStandardItem(r.icon, match.pretty);
                 item->setEditable(false);
                 item->setForeground(QBrush(r.color));
+                item->setFont(font);
                 item->setData(data);
+                
+//                qDebug() << name << r.color << r.icon;
 
                 parentItem->appendRow(item);
                 wordList.append(item->text());
@@ -304,6 +318,8 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
                 QString dep = match.pretty;
                 QMap<QString, QVariant> data;
                 QStandardItem * item = new QStandardItem(r.icon, dep);
+                item->setForeground(QBrush(r.color));
+                item->setFont(font);
 
                 QString fulldep = findFileName(dep);
                 if (fulldep.isEmpty())
@@ -337,10 +353,7 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
 
 QStandardItemModel * ProjectParser::treeModel()
 {
-    if (model == 0)
-        model = new QStandardItemModel();
-
-    return model;
+    return &model;
 }
 
 QStringList ProjectParser::getWordList()

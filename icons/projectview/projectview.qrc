@@ -1,15 +1,20 @@
 <!DOCTYPE RCC><RCC version="1.0">
-<qresource prefix="/icons/projectviewer">
+<qresource prefix="/icons/projectview">
+    <file>style.qss</file>
+    <file>icon.png</file>
     <file>block-con.png</file>
     <file>block-obj.png</file>
     <file>block-pub.png</file>
     <file>block-pri.png</file>
-    <file>branch-closed.png</file>
-    <file>branch-end.png</file>
-    <file>branch-more.png</file>
-    <file>branch-open.png</file>
-    <file>vline.png</file>
-    <file>style.qss</file>
-    <file>icon.png</file>
+    <file>dark_branch-closed.png</file>
+    <file>dark_branch-end.png</file>
+    <file>dark_branch-more.png</file>
+    <file>dark_branch-open.png</file>
+    <file>dark_vline.png</file>
+    <file>light_branch-closed.png</file>
+    <file>light_branch-end.png</file>
+    <file>light_branch-more.png</file>
+    <file>light_branch-open.png</file>
+    <file>light_vline.png</file>
 </qresource>
 </RCC>

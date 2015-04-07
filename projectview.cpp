@@ -11,17 +11,13 @@
 #include <QMap>
 
 #include <QTextDocument>
+#include <QDirIterator>
 
 ProjectView::ProjectView(QWidget *parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    QFile file(":/icons/projectviewer/style.qss");
-    file.open(QFile::ReadOnly);
-    QString style = file.readAll();
-
     ui.view->header()->hide();
-    ui.view->setStyleSheet(style);
 
     connect(ui.search,SIGNAL(textChanged(const QString &)),
             &proxy, SLOT(setFilterRegExp(const QString &)));
@@ -30,10 +26,27 @@ ProjectView::ProjectView(QWidget *parent)
     connect(ui.view,SIGNAL(clicked(QModelIndex)),this,SLOT(clicked(QModelIndex)));
 
     installEventFilter(this);
+    updateColors();
 }
 
 ProjectView::~ProjectView()
 {
+}
+
+void ProjectView::updateColors(QColor background, QFont font)
+{
+    QFile file(":/icons/projectview/style.qss");
+    file.open(QFile::ReadOnly);
+    QString style = file.readAll();
+
+    style = style.arg(background.name());
+
+    if (background.lightness() < 128)
+        style = style.arg("dark");
+    else
+        style = style.arg("light");
+
+    ui.view->setStyleSheet(style);
 }
 
 void ProjectView::clicked(QModelIndex index)
