@@ -246,7 +246,7 @@ void ProjectParser::buildModel()
     item->setEditable(false);
 
     foreach (Rule r, rules)
-        if (QString::compare(r.name, "_includes_"))
+        if (!QString::compare(r.name, "_includes_"))
             item->setForeground(QBrush(r.color));
 
     QFont rootfont = font;
