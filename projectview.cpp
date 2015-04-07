@@ -25,15 +25,15 @@ ProjectView::ProjectView(QWidget *parent)
             this, SLOT(changeView()));
     connect(ui.view,SIGNAL(clicked(QModelIndex)),this,SLOT(clicked(QModelIndex)));
 
-    installEventFilter(this);
     updateColors();
+    setFocusProxy(ui.search);
 }
 
 ProjectView::~ProjectView()
 {
 }
 
-void ProjectView::updateColors(QColor background, QFont font)
+void ProjectView::updateColors(QColor background)
 {
     QFile file(":/icons/projectview/style.qss");
     file.open(QFile::ReadOnly);
@@ -91,6 +91,7 @@ void ProjectView::selectionChanged(
         const QItemSelection & selected,
         const QItemSelection & deselected)
 {
+    Q_UNUSED(deselected);
     QModelIndex index = selected.indexes()[0];
     QStandardItem * item = ((QStandardItemModel * )index.model())->itemFromIndex(index);
 
@@ -116,26 +117,11 @@ void ProjectView::expandChildren(const QModelIndex &index, bool expandOrCollapse
 void ProjectView::setModel(QStandardItemModel * model)
 {
     proxy.setSourceModel(model);
-
     ui.view->setModel(&proxy);
-
-//    ui.view->setExpanded(ui.view->model()->index(0,0), true);
-
-//    expandChildren(ui.view->model()->index(0,0), true);
     ui.view->setExpanded(ui.view->model()->index(0,0), true);
 }
 
-bool ProjectView::eventFilter(QObject *target, QEvent *event)
+void ProjectView::clearSearch()
 {
-    if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *e = static_cast<QKeyEvent *>(event);
-
-        switch (e->key())
-        {
-        case (Qt::Key_Escape):
-            ui.search->clear();
-            return true;
-        }
-    }
-    return QWidget::eventFilter(target, event);
+    ui.search->clear();
 }

@@ -51,7 +51,6 @@ class ProjectView : public QWidget
 private:
     Ui::ProjectView ui;
     ProjectFilter proxy;
-    bool eventFilter(QObject *target, QEvent *event);
 
 public:
     explicit ProjectView(QWidget *parent = 0);
@@ -65,7 +64,8 @@ public:
 public slots:
     void changeView();
     void clicked(QModelIndex index);
-    void updateColors(QColor background = QColor(), QFont font = QFont());
+    void updateColors(QColor background = QColor());
+    void clearSearch();
 
 signals:
     void showFileLine(QString filename, int linenumber);
