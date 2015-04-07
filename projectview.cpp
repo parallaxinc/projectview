@@ -1,12 +1,16 @@
 #include "projectview.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QDebug>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
 #include <QRegExp>
 #include <QKeyEvent>
+#include <QMap>
+
+#include <QTextDocument>
 
 ProjectView::ProjectView(QWidget *parent)
     : QWidget(parent)
@@ -34,7 +38,27 @@ ProjectView::~ProjectView()
 
 void ProjectView::clicked(QModelIndex index)
 {
-    qDebug() << ui.view->model()->data(index).toString().replace(" ",".*?");
+    const QStandardItemModel * model = (QStandardItemModel *) proxy.sourceModel();
+    QStandardItem * item = model->itemFromIndex(proxy.mapToSource(index));
+    QMap<QString, QVariant> data = item->data().toMap();
+    QString filename = data["file"].toString();
+    QString exact = data["exact"].toString();
+
+    QFileInfo fi(filename);
+    if (!fi.exists() || !fi.isFile())
+        return;
+
+    QFile f(filename);
+
+    f.open(QFile::ReadWrite);
+    QString text = f.readAll();
+
+    QTextDocument doc(text);
+    int line = doc.find(exact).blockNumber();
+
+    qDebug() << filename << line << exact;
+
+    emit showFileLine(filename, line);
 }
 
 void ProjectView::changeView()
@@ -58,11 +82,6 @@ void ProjectView::selectionChanged(
     QStandardItem * item = ((QStandardItemModel * )index.model())->itemFromIndex(index);
 
     QList<QStandardItem *> items = ((QStandardItemModel *) index.model())->findItems(item->text());
-    
-//    foreach (QStandardItem * i, items)
-//    {
-//        qDebug() << i->text();
-//    } 
 }
 
 void ProjectView::expandChildren(const QModelIndex &index, bool expandOrCollapse)

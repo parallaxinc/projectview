@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <QList>
 
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -16,6 +17,12 @@
 class ProjectParser
 {
 public:
+    struct Match
+    {
+        QString exact;
+        QString pretty;
+    };
+
     struct Pattern
     {
         QString regex;
@@ -65,8 +72,8 @@ public:
     QList<Rule> getRules();
     void clearRules();
     void addRule(QString name, QList<Pattern> patterns, QIcon icon = QIcon(), QColor color = QColor());
-    QStringList matchRule(const QString & name, const QString & text);
-    QStringList matchRuleFromFile(const QString & name, const QString & filename);
-    QStringList matchPattern(Pattern pattern, const QString & text);
+    QList<Match> matchRule(const QString & name, const QString & text);
+    QList<Match> matchRuleFromFile(const QString & name, const QString & filename);
+    QList<Match> matchPattern(Pattern pattern, const QString & text);
 };
 

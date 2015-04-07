@@ -54,7 +54,6 @@ void ProjectParser::setSearchPaths()
     {
         searchPaths << QDir(p).canonicalPath();
     }
-    qDebug() << "PATHS" << searchPaths;
 }
 
 void ProjectParser::clearFileList()
@@ -64,7 +63,7 @@ void ProjectParser::clearFileList()
 
 void ProjectParser::appendFileList(const QString & name)
 {
-    QStringList dependencies = matchRuleFromFile("_includes_", name);
+    QList<ProjectParser::Match> dependencies = matchRuleFromFile("_includes_", name);
 
     fileList.clear();
     for (int i = 0; i < searchPaths.size(); i++)
@@ -72,10 +71,10 @@ void ProjectParser::appendFileList(const QString & name)
         fileList << QStringList();
     }
 
-    foreach (QString dependency, dependencies)
+    foreach (Match dependency, dependencies)
     {
-        int fileindex = findFileIndex(dependency);
-        fileList[fileindex].append(dependency);
+        int fileindex = findFileIndex(dependency.pretty);
+        fileList[fileindex].append(dependency.pretty);
     }
 
 //    qDebug() << fileList;
@@ -111,9 +110,9 @@ int ProjectParser::findFileIndex(const QString & name)
     return -1;
 }
 
-QStringList ProjectParser::matchPattern(Pattern pattern, const QString & text)
+QList<ProjectParser::Match> ProjectParser::matchPattern(Pattern pattern, const QString & text)
 {
-    QStringList result;
+    QList<Match> result;
 
     QRegularExpression re(pattern.regex);
 
@@ -141,13 +140,17 @@ QStringList ProjectParser::matchPattern(Pattern pattern, const QString & text)
                 capture += v.toString();
             }
         }
-        result << capture.simplified();
+
+        Match r;
+        r.exact = m.captured();
+        r.pretty = capture.simplified();
+        result << r;
     }
 
     return result;
 }
 
-QStringList ProjectParser::matchRuleFromFile(const QString & name, const QString & filename)
+QList<ProjectParser::Match> ProjectParser::matchRuleFromFile(const QString & name, const QString & filename)
 {
     QFile f(filename);
     f.open(QFile::ReadOnly);
@@ -156,9 +159,9 @@ QStringList ProjectParser::matchRuleFromFile(const QString & name, const QString
     return matchRule(name, s);
 }
 
-QStringList ProjectParser::matchRule(const QString & name, const QString & text)
+QList<ProjectParser::Match> ProjectParser::matchRule(const QString & name, const QString & text)
 {
-    QStringList result;
+    QList<Match> result;
 
     foreach (Rule r, rules)
     {
@@ -215,9 +218,14 @@ void ProjectParser::buildModel()
     wordList.clear();
 
     model = new QStandardItemModel(); 
+
+    QFileInfo fi(filename);
+    if (!fi.exists() || !fi.isFile())
+        return;
+
     QStandardItem * root = model->invisibleRootItem();
 
-    QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),QFileInfo(filename).fileName());
+    QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),fi.fileName());
     QMap<QString, QVariant> data;
     data["file"] = QFileInfo(filename).canonicalFilePath();
     
@@ -268,18 +276,22 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
 void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name)
 {
     QList<QStandardItem *> items;
-//    qDebug() << parentItem->row() << parentItem->text();
 
     foreach (Rule r, rules)
     {
         if (QString::compare(r.name, "_includes_"))
         {
-            foreach (QString text, matchRuleFromFile(r.name, name))
+            foreach (ProjectParser::Match match, matchRuleFromFile(r.name, name))
             {
-                QStandardItem * item = new QStandardItem(r.icon, text);
+                QMap<QString, QVariant> data;
+                data["file"] = name;
+                data["exact"] = match.exact;
+                data["line"] = -1;
+
+                QStandardItem * item = new QStandardItem(r.icon, match.pretty);
                 item->setEditable(false);
                 item->setForeground(QBrush(r.color));
-                item->setData(text);
+                item->setData(data);
 
                 parentItem->appendRow(item);
                 wordList.append(item->text());
@@ -287,8 +299,9 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
         }
         else
         {
-            foreach (QString dep, matchRuleFromFile("_includes_", name))
+            foreach (ProjectParser::Match match, matchRuleFromFile("_includes_", name))
             {
+                QString dep = match.pretty;
                 QMap<QString, QVariant> data;
                 QStandardItem * item = new QStandardItem(r.icon, dep);
 

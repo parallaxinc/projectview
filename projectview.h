@@ -65,5 +65,8 @@ public:
 public slots:
     void changeView();
     void clicked(QModelIndex index);
+
+signals:
+    void showFileLine(QString filename, int linenumber);
 };
 
