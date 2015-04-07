@@ -44,7 +44,7 @@ private:
 
     QList<Rule> rules;
 
-    QStandardItemModel model;
+    QStandardItemModel * model;
     QList<QStringList> fileList;
     QString filename;
     QStringList libraryPaths;

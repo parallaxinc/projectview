@@ -12,11 +12,15 @@
 
 ProjectParser::ProjectParser()
 {
+    model = new QStandardItemModel();
     caseInsensitive = false;
 }
 
 ProjectParser::~ProjectParser()
 {
+    model->clear();
+    delete model;
+    model = 0;
 }
 
 void ProjectParser::setFont(QFont font)
@@ -226,13 +230,13 @@ void ProjectParser::clearRules()
 void ProjectParser::buildModel()
 {
     wordList.clear();
-    model.clear();
+    model->clear();
 
     QFileInfo fi(filename);
     if (!fi.exists() || !fi.isFile())
         return;
 
-    QStandardItem * root = model.invisibleRootItem();
+    QStandardItem * root = model->invisibleRootItem();
 
     QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),fi.fileName());
     QMap<QString, QVariant> data;
@@ -245,7 +249,9 @@ void ProjectParser::buildModel()
         if (QString::compare(r.name, "_includes_"))
             item->setForeground(QBrush(r.color));
 
-    item->setFont(font);
+    QFont rootfont = font;
+    rootfont.setBold(true);
+    item->setFont(rootfont);
 
     root->appendRow(item);
 
@@ -286,10 +292,12 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
 
 void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name)
 {
+    QList<QStandardItem *> children;
     QList<QStandardItem *> items;
 
     foreach (Rule r, rules)
     {
+        qDebug() << r.name;
         if (QString::compare(r.name, "_includes_"))
         {
             foreach (ProjectParser::Match match, matchRuleFromFile(r.name, name))
@@ -305,9 +313,7 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
                 item->setFont(font);
                 item->setData(data);
                 
-//                qDebug() << name << r.color << r.icon;
-
-                parentItem->appendRow(item);
+                items.append(item);
                 wordList.append(item->text());
             }
         }
@@ -333,15 +339,16 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
                 item->setData(QVariant(data));
                 item->setEditable(false);
 
-                items.append(item);
+                children.append(item);
                 wordList.append(item->text());
             }
         }
     }
 
+    parentItem->appendRows(children);
     parentItem->appendRows(items);
 
-    foreach (QStandardItem * item, items)
+    foreach (QStandardItem * item, children)
     {
         if (!detectCircularReference(item) && findFileIndex(item->text()) > -1)
         {
@@ -353,7 +360,7 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
 
 QStandardItemModel * ProjectParser::treeModel()
 {
-    return &model;
+    return model;
 }
 
 QStringList ProjectParser::getWordList()
