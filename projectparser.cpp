@@ -297,7 +297,6 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
 
     foreach (Rule r, rules)
     {
-        qDebug() << r.name;
         if (QString::compare(r.name, "_includes_"))
         {
             foreach (ProjectParser::Match match, matchRuleFromFile(r.name, name))
