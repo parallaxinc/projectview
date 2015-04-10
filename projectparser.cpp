@@ -59,28 +59,18 @@ void ProjectParser::setSearchPaths()
     }
 }
 
-void ProjectParser::clearFileList()
+QStringList ProjectParser::getFileList()
 {
+    QList<QStandardItem *> items = model->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive);
     fileList.clear();
-}
 
-void ProjectParser::appendFileList(const QString & name)
-{
-    QList<ProjectParser::Match> dependencies = matchRuleFromFile("_includes_", name);
-
-    fileList.clear();
-    for (int i = 0; i < searchPaths.size(); i++)
+    foreach (QStandardItem * item, items)
     {
-        fileList << QStringList();
+        fileList << item->data().toMap()["file"].toString();
     }
+    fileList.removeDuplicates();
 
-    foreach (Match dependency, dependencies)
-    {
-        int fileindex = findFileIndex(dependency.pretty);
-        fileList[fileindex].append(dependency.pretty);
-    }
-
-//    qDebug() << fileList;
+    return fileList;
 }
 
 QString ProjectParser::findFileName(const QString & name)
@@ -215,6 +205,16 @@ void ProjectParser::addRule(QString name, QList<Pattern> patterns, QIcon icon, Q
     r.color = color;
 
     rules.append(r);
+}
+
+ProjectParser::Rule ProjectParser::getRule(const QString & name)
+{
+    foreach (Rule r, rules)
+        if (!r.name.compare(name))
+            return r;
+
+    Rule r;
+    return r;
 }
 
 QList<ProjectParser::Rule> ProjectParser::getRules()

@@ -45,7 +45,7 @@ private:
     QList<Rule> rules;
 
     QStandardItemModel * model;
-    QList<QStringList> fileList;
+    QStringList fileList;
     QString filename;
     QStringList libraryPaths;
     QStringList searchPaths;
@@ -53,7 +53,6 @@ private:
 
     void setSearchPaths();
     int findFileIndex(const QString & name);
-    QString findFileName(const QString & name);
     bool detectCircularReference(QStandardItem * item);
     void appendModel(QStandardItem * parentItem, const QString & name);
 public:
@@ -61,14 +60,15 @@ public:
     ~ProjectParser();
     void setFile(const QString & filename);
     void setLibraryPaths(QStringList paths);
-    void clearFileList();
-    void appendFileList(const QString & name);
+    QStringList getFileList();
     void buildModel();
     QStandardItemModel * treeModel();
     void setCaseInsensitive(bool enabled);
     QStringList getWordList();
+    QString findFileName(const QString & name);
 
 
+    Rule getRule(const QString & name);
     QList<Rule> getRules();
     void clearRules();
     void addRule(QString name, QList<Pattern> patterns, QIcon icon = QIcon(), QColor color = QColor());
