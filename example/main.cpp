@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     privatefunctions.append(f2);
 
     ProjectParser::Pattern d1;
-    d1.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*:[ \t]*\"(.*?)(.spin)?\"$";
+    d1.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*:[ \t]*\"(.*?)(\\.spin)?\".*$";
     d1.capture << 2 << ".spin";
     _includes_.append(d1);
 

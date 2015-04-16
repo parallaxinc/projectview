@@ -135,7 +135,7 @@ QList<ProjectParser::Match> ProjectParser::matchPattern(Pattern pattern, const Q
         }
 
         Match r;
-        r.exact = m.captured();
+        r.exact = m.captured().trimmed();
         r.pretty = capture.simplified();
         result << r;
     }
