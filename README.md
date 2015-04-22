@@ -1,18 +1,30 @@
-# projectviewer
+# projectview
 
-projectviewer shows a dynamic bird's eye view of your project, and can be customized to your language and application.
+projectview shows a dynamic bird's eye view of your project, and can be customized to your language and application.
 
-Here, projectviewer is showing a Spin language project.
+Here, projectview is showing a Spin language project.
 
-![](screenshots/projectviewer_038.png)
+![](screenshots/projectview.png)
 
-projectviewer notifies the user when there is a circular dependency in inclusion.
+projectview notifies the user when there is a circular dependency in inclusion.
 
-![](screenshots/projectviewer_039.png)
+![](screenshots/circular.png)
 
 It will also tell you when a file was not found.
 
-![](screenshots/projectviewer_040.png)
+![](screenshots/notfound.png)
+
+projectview is searchable!
+
+![](screenshots/search.png)
+
+You can theme it too! Here is projectview embedded into PropellerIDE.
+
+![](screenshots/embedded1.png)
+
+And again!
+
+![](screenshots/embedded2.png)
 
 ## Usage
 
@@ -25,7 +37,7 @@ parser.setCaseInsensitive(true);
 
 ### Setting up search paths
 
-To use projectviewer, you need to provide a filename and
+To use projectview, you need to provide a filename and
 additional search paths for locating local dependencies.
 
 ```cpp
@@ -35,12 +47,12 @@ parser.setLibraryPaths(QStringList() << "../../../");
 
 ### Rules
 
-To use projectviewer, you must build a description of the
+To use projectview, you must build a description of the
 language elements you'd like to to display. This is done using the
 `Parser::Rule` structure,
 
 A special Rule is defined for declaring file dependencies: `_includes_`.
-Using this variable will result in projectviewer looking in the file system
+Using this variable will result in projectview looking in the file system
 for the string you extract from the source file.
 
 Each rule can hold multiple patterns for languages that support multiple
@@ -91,7 +103,7 @@ Provide a name, icon, and color for display.
 
 ```cpp
 parser.addRule("constants",patterns,
-    QIcon(":/icons/projectviewer/block-pub.png"),
+    QIcon(":/icons/projectview/block-pub.png"),
     QColor("#0000FF"));
 ```
 
