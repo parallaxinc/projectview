@@ -1,6 +1,20 @@
 # projectview
 
-projectview shows a dynamic bird's eye view of your project, and can be customized to your language and application.
+### A simple regex-based project hierarchy parser/display
+
+## About
+
+projectview implements project parser that is controlled by simple regular expression rules. This allows you to build a dynamic hierarchy of your software project for whatever language or application you desire, and provides a colorful, themeable tree widget for displaying it.
+
+#### Features
+
+* Language-independent
+* Detects circular dependencies and files not found
+* Totally themeable
+* Searchable with the built-in search box
+* Integrates with your editor
+
+#### Screenshots
 
 Here, projectview is showing a Spin language project.
 
@@ -28,14 +42,14 @@ And again!
 
 ## Usage
 
-### Setup
+#### Setup
 
 ```cpp
 Parser parser;
 parser.setCaseInsensitive(true);
 ```
 
-### Setting up search paths
+#### Setting up search paths
 
 To use projectview, you need to provide a filename and
 additional search paths for locating local dependencies.
@@ -45,7 +59,7 @@ parser.setFile("../../Pikemanz/00_Pikemanz.spin");
 parser.setLibraryPaths(QStringList() << "../../../");
 ```
 
-### Rules
+#### Rules
 
 To use projectview, you must build a description of the
 language elements you'd like to to display. This is done using the
@@ -58,7 +72,7 @@ for the string you extract from the source file.
 Each rule can hold multiple patterns for languages that support multiple
 variations of a syntax with the same meaning.
 
-### Adding patterns
+#### Adding patterns
 
 Rules are created by passing a list of patterns to the `addRule` function,
 so let's create a list of patterns.
@@ -97,7 +111,7 @@ Now add the pattern to the list.
 patterns.append(pattern);
 ```
 
-### Adding the rule
+#### Adding the rule
 
 Provide a name, icon, and color for display.
 
@@ -107,7 +121,7 @@ parser.addRule("constants",patterns,
     QColor("#0000FF"));
 ```
 
-### Displaying the tree
+#### Displaying the tree
 
 ```cpp
 parser.buildModel();
