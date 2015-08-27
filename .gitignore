@@ -36,3 +36,10 @@ Makefile*
 /projectview
 /example/projectview
 /example/projectview.exe
+
+# Visual Studio
+*.obj
+*.lib
+
+# Vim
+*~
