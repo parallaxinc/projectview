@@ -1,21 +1,27 @@
-TEMPLATE = lib
-CONFIG += staticlib
-TARGET = projectview
-INCLUDEPATH += .
+TEMPLATE=subdirs
 
-QT += gui widgets
-CONFIG -= debug_and_release app_bundle
+SUBDIRS = \
+    src \
+    example \
 
-SOURCES += \
-    projectparser.cpp \
-    projectview.cpp \
+unix|macx
+{
+    count(PREFIX,0):PREFIX=/usr/local
 
-HEADERS += \
-    projectparser.h \
-    projectview.h \
+    libs.files = lib/*.a lib/*.so*
+    bins.files = bin/*
+    includes.files = include/*
 
-FORMS += \
-    projectview.ui \
+    libs.path = $$PREFIX/lib/
+    bins.path = $$PREFIX/bin/
+    includes.path = $$PREFIX/include
 
-RESOURCES += \
-    icons/projectview/projectview.qrc \
+    INSTALLS += bins libs includes
+}
+
+win32
+{
+    all.files = lib/* bin/* include/*
+    all.path = $$PREFIX/
+}
+

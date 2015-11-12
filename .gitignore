@@ -33,13 +33,14 @@ Makefile*
 *.qmlproject.user
 *.qmlproject.user.*
 
-/projectview
-/example/projectview
-/example/projectview.exe
-
 # Visual Studio
 *.obj
 *.lib
 
 # Vim
 *~
+*.swp
+
+/lib/
+/bin/
+projectview

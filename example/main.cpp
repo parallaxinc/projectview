@@ -8,8 +8,8 @@
 #include <QPalette>
 #include <QColor>
 
-#include "projectparser.h"
-#include "projectview.h"
+#include <ProjectParser>
+#include <ProjectView>
 
 
 int main(int argc, char *argv[])
