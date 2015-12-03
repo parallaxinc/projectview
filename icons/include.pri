@@ -1,1 +1,1 @@
-RESOURCES += $$PWD/icons.qrc
+RESOURCES += $$PWD/projectview.qrc
