@@ -12,7 +12,9 @@
 #include <QVariant>
 
 #include <QRegularExpression>
+#include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(projectparser)
 
 class ProjectParser
 {
@@ -66,7 +68,6 @@ public:
     void setCaseInsensitive(bool enabled);
     QStringList getWordList();
     QString findFileName(const QString & name);
-
 
     Rule getRule(const QString & name);
     QList<Rule> getRules();

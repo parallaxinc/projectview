@@ -9,6 +9,7 @@
 #include <QBrush>
 #include <QColor>
 
+Q_LOGGING_CATEGORY(projectparser, "project.parser")
 
 ProjectParser::ProjectParser()
 {
@@ -33,9 +34,9 @@ void ProjectParser::setCaseInsensitive(bool enabled)
     caseInsensitive = enabled;
 }
 
-
 void ProjectParser::setFile(const QString & name)
 {
+    qCDebug(projectparser) << "setFile(" << name << ")";
     filename = name;
     setSearchPaths();
 }
@@ -61,6 +62,8 @@ void ProjectParser::setSearchPaths()
 
 QStringList ProjectParser::getFileList()
 {
+    qCDebug(projectparser) << "getFileList()";
+    
     QList<QStandardItem *> items = model->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive);
     fileList.clear();
 
@@ -99,7 +102,7 @@ int ProjectParser::findFileIndex(const QString & name)
 
         pathindex++;
     }
-    qDebug() << "NOT FOUND" << name;
+    qCDebug(projectparser) << "NOT FOUND:" << name;
     return -1;
 }
 
@@ -269,10 +272,10 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
                 (Qt::CaseSensitivity) (!caseInsensitive)
             ))
         {
-            qDebug() << "CIRCULAR DEPENDENCY";
-            qDebug() << "  PARENT" << parent->data().toMap()["file"].toString();
-            qDebug() << "    ITEM" << item->data().toMap()["file"].toString();
-            qDebug() << "";
+            qCDebug(projectparser) << "CIRCULAR DEPENDENCY";
+            qCDebug(projectparser) << "  PARENT" << parent->data().toMap()["file"].toString();
+            qCDebug(projectparser) << "    ITEM" << item->data().toMap()["file"].toString();
+            qCDebug(projectparser) << "";
 
             item->setForeground(QBrush(QColor("#FF0000")));
             item->parent()->setForeground(QBrush(QColor("#FF0000")));

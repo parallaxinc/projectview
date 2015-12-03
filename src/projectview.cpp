@@ -13,6 +13,8 @@
 #include <QTextDocument>
 #include <QDirIterator>
 
+Q_LOGGING_CATEGORY(projectview, "project.view")
+
 ProjectView::ProjectView(QWidget *parent)
     : QWidget(parent)
 {
@@ -69,7 +71,7 @@ void ProjectView::clicked(QModelIndex index)
     QTextDocument doc(text);
     int line = doc.find(exact).blockNumber();
 
-    qDebug() << filename << line << exact;
+    qCDebug(projectview) << QString("(%1, %2):").arg(fi.fileName()).arg(line) << exact;
 
     emit showFileLine(filename, line);
 }
