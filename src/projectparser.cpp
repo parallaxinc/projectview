@@ -9,7 +9,7 @@
 #include <QBrush>
 #include <QColor>
 
-Q_LOGGING_CATEGORY(projectparser, "project.parser")
+Q_LOGGING_CATEGORY(logprojectparser, "project.parser")
 
 ProjectParser::ProjectParser()
 {
@@ -36,7 +36,6 @@ void ProjectParser::setCaseInsensitive(bool enabled)
 
 void ProjectParser::setFile(const QString & name)
 {
-    qCDebug(projectparser) << "setFile(" << name << ")";
     filename = name;
     setSearchPaths();
 }
@@ -62,8 +61,6 @@ void ProjectParser::setSearchPaths()
 
 QStringList ProjectParser::getFileList()
 {
-    qCDebug(projectparser) << "getFileList()";
-    
     QList<QStandardItem *> items = model->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive);
     fileList.clear();
 
@@ -102,7 +99,8 @@ int ProjectParser::findFileIndex(const QString & name)
 
         pathindex++;
     }
-    qCDebug(projectparser) << "NOT FOUND:" << name;
+
+    qCCritical(logprojectparser) << "File not found:" << name;
     return -1;
 }
 
@@ -232,6 +230,7 @@ void ProjectParser::clearRules()
 
 void ProjectParser::buildModel()
 {
+    qCDebug(logprojectparser) << "rebuilding project model";
     wordList.clear();
     model->clear();
 
@@ -272,10 +271,10 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
                 (Qt::CaseSensitivity) (!caseInsensitive)
             ))
         {
-            qCDebug(projectparser) << "CIRCULAR DEPENDENCY";
-            qCDebug(projectparser) << "  PARENT" << parent->data().toMap()["file"].toString();
-            qCDebug(projectparser) << "    ITEM" << item->data().toMap()["file"].toString();
-            qCDebug(projectparser) << "";
+            qCCritical(logprojectparser) << "Circular dependency";
+            qCCritical(logprojectparser) << "  parent:" << parent->data().toMap()["file"].toString();
+            qCCritical(logprojectparser) << "    item:" << item->data().toMap()["file"].toString();
+            qCCritical(logprojectparser) << "";
 
             item->setForeground(QBrush(QColor("#FF0000")));
             item->parent()->setForeground(QBrush(QColor("#FF0000")));

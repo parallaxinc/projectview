@@ -9,7 +9,7 @@
 
 #include "ui_projectview.h"
 
-Q_DECLARE_LOGGING_CATEGORY(projectview)
+Q_DECLARE_LOGGING_CATEGORY(logprojectview)
 
 class ProjectFilter : public QSortFilterProxyModel 
 {

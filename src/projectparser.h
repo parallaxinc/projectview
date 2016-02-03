@@ -14,7 +14,7 @@
 #include <QRegularExpression>
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(projectparser)
+Q_DECLARE_LOGGING_CATEGORY(logprojectparser)
 
 class ProjectParser
 {
