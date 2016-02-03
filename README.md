@@ -18,46 +18,34 @@ projectview implements project parser that is controlled by simple regular expre
 
 Here, projectview is showing a Spin language project.
 
-![](screenshots/projectview.png)
+![](https://raw.githubusercontent.com/parallaxinc/projectview/master/screenshots/projectview.png)
 
 projectview notifies the user when there is a circular dependency in inclusion.
 
-![](screenshots/circular.png)
+![](https://raw.githubusercontent.com/parallaxinc/projectview/master/screenshots/circular.png)
 
 It will also tell you when a file was not found.
 
-![](screenshots/notfound.png)
+![](https://raw.githubusercontent.com/parallaxinc/projectview/master/screenshots/notfound.png)
 
-projectview is searchable!
+projectview can be searched.
 
-![](screenshots/search.png)
-
-You can theme it too! Here is projectview embedded into PropellerIDE.
-
-![](screenshots/embedded1.png)
-
-And again!
-
-![](screenshots/embedded2.png)
+![](https://raw.githubusercontent.com/parallaxinc/projectview/master/screenshots/search.png)
 
 ## Usage
 
 #### Setup
 
-```cpp
-Parser parser;
-parser.setCaseInsensitive(true);
-```
+    Parser parser;
+    parser.setCaseInsensitive(true);
 
 #### Setting up search paths
 
 To use projectview, you need to provide a filename and
 additional search paths for locating local dependencies.
 
-```cpp
-parser.setFile("../../Pikemanz/00_Pikemanz.spin");
-parser.setLibraryPaths(QStringList() << "../../../");
-```
+    parser.setFile("../../Pikemanz/00_Pikemanz.spin");
+    parser.setLibraryPaths(QStringList() << "../../../");
 
 #### Rules
 
@@ -77,15 +65,11 @@ variations of a syntax with the same meaning.
 Rules are created by passing a list of patterns to the `addRule` function,
 so let's create a list of patterns.
 
-```cpp
-QList<Parser::Pattern> patterns;
-```
+    QList<Parser::Pattern> patterns;
 
 Then, we create a Pattern.
 
-```cpp
-Parser::Pattern pattern;
-```
+    Parser::Pattern pattern;
 
 Each `Pattern` contains a regular expression and a list
 of values that describe how to extract the string.
@@ -93,44 +77,33 @@ of values that describe how to extract the string.
 To extract any data at all, your regular expression must contain
 unnamed pattern groups to extract.
 
-```cpp
-pattern.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*=[ \t]*(.+?)('.*?)?[ \t]*$";
-```
+    pattern.regex = "^[ \t]*([a-zA-Z_]+[a-zA-Z0-9_]*)[ \t]*=[ \t]*(.+?)('.*?)?[ \t]*$";
 
 `capture` is a `QList<QVariant` object that can hold either `int` or
 `QString`. If an int, it will capture a group from the regular expression. If
 a QString, the string will be added to the result.
 
-```cpp
-pattern.capture << 1 << " returns " << 2;
-```
+    pattern.capture << 1 << " returns " << 2;
 
 Now add the pattern to the list.
 
-```cpp
-patterns.append(pattern);
-```
+    patterns.append(pattern);
 
 #### Adding the rule
 
 Provide a name, icon, and color for display.
 
-```cpp
-parser.addRule("constants",patterns,
-    QIcon(":/icons/projectview/block-pub.png"),
-    QColor("#0000FF"));
-```
+    parser.addRule("constants",patterns,
+        QIcon(":/icons/projectview/block-pub.png"),
+        QColor("#0000FF"));
 
 #### Displaying the tree
 
-```cpp
-parser.buildModel();
-```
+    parser.buildModel();
+    
 Now use the `getModel()` function to display your project with a 
 `QTreeView`.
 
-```cpp
-QTreeView *tree= new QTreeView();
-tree->setModel(parser.getModel());
-tree->show();
-```
+    QTreeView *tree= new QTreeView();
+    tree->setModel(parser.getModel());
+    tree->show();
