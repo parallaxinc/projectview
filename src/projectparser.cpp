@@ -230,7 +230,6 @@ void ProjectParser::clearRules()
 
 void ProjectParser::buildModel()
 {
-    qCDebug(logprojectparser) << "rebuilding project model";
     wordList.clear();
     model->clear();
 
