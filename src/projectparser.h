@@ -19,6 +19,12 @@ Q_DECLARE_LOGGING_CATEGORY(logprojectparser)
 class ProjectParser
 {
 public:
+    enum ParserError {
+        NoError,
+        NotFoundError,
+        CircularDependencyError
+    };
+
     struct Match
     {
         QString exact;
@@ -41,6 +47,8 @@ public:
     };
 
 private:
+    ParserError _error;
+
     QFont font;
     bool caseInsensitive;
 
@@ -68,6 +76,8 @@ public:
     void setCaseInsensitive(bool enabled);
     QStringList getWordList();
     QString findFileName(const QString & name);
+
+    ParserError status();
 
     Rule getRule(const QString & name);
     QList<Rule> getRules();

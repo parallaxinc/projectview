@@ -15,6 +15,7 @@ ProjectParser::ProjectParser()
 {
     model = new QStandardItemModel();
     caseInsensitive = false;
+    _error = NoError;
 }
 
 ProjectParser::~ProjectParser()
@@ -22,6 +23,11 @@ ProjectParser::~ProjectParser()
     model->clear();
     delete model;
     model = 0;
+}
+
+ProjectParser::ParserError ProjectParser::status()
+{
+    return _error;
 }
 
 void ProjectParser::setFont(QFont font)
@@ -100,6 +106,7 @@ int ProjectParser::findFileIndex(const QString & name)
         pathindex++;
     }
 
+    _error = NotFoundError;
     qCCritical(logprojectparser) << "File not found:" << name;
     return -1;
 }
@@ -230,6 +237,8 @@ void ProjectParser::clearRules()
 
 void ProjectParser::buildModel()
 {
+    _error = NoError;
+
     wordList.clear();
     model->clear();
 
@@ -283,6 +292,7 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
             parent->setText(QFileInfo(
                         parent->data().toMap()["file"].toString()).fileName() + " (CIRCULAR DEPENDENCY)");
             item->parent()->removeRow(item->row());
+            _error = CircularDependencyError;
             return true;
         }
 
