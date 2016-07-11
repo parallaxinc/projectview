@@ -5,11 +5,8 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include <QDebug>
-#include <QLoggingCategory>
 
 #include "ui_projectview.h"
-
-Q_DECLARE_LOGGING_CATEGORY(logprojectview)
 
 class ProjectFilter : public QSortFilterProxyModel 
 {

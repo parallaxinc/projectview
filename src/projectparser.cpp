@@ -9,8 +9,6 @@
 #include <QBrush>
 #include <QColor>
 
-Q_LOGGING_CATEGORY(logprojectparser, "project.parser")
-
 ProjectParser::ProjectParser()
 {
     model = new QStandardItemModel();
@@ -107,7 +105,7 @@ int ProjectParser::findFileIndex(const QString & name)
     }
 
     _error = NotFoundError;
-    qCCritical(logprojectparser) << "File not found:" << name;
+    qCritical() << "File not found:" << name;
     return -1;
 }
 
@@ -279,10 +277,10 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
                 (Qt::CaseSensitivity) (!caseInsensitive)
             ))
         {
-            qCCritical(logprojectparser) << "Circular dependency";
-            qCCritical(logprojectparser) << "  parent:" << parent->data().toMap()["file"].toString();
-            qCCritical(logprojectparser) << "    item:" << item->data().toMap()["file"].toString();
-            qCCritical(logprojectparser) << "";
+            qCritical() << "Circular dependency";
+            qCritical() << "  parent:" << parent->data().toMap()["file"].toString();
+            qCritical() << "    item:" << item->data().toMap()["file"].toString();
+            qCritical() << "";
 
             item->setForeground(QBrush(QColor("#FF0000")));
             item->parent()->setForeground(QBrush(QColor("#FF0000")));

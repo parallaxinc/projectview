@@ -13,8 +13,6 @@
 #include <QTextDocument>
 #include <QDirIterator>
 
-Q_LOGGING_CATEGORY(logprojectview, "project.view")
-
 ProjectView::ProjectView(QWidget *parent)
     : QWidget(parent)
 {
@@ -54,14 +52,27 @@ void ProjectView::updateColors(QColor background)
 void ProjectView::clicked(QModelIndex index)
 {
     const QStandardItemModel * model = (QStandardItemModel *) proxy.sourceModel();
+    if (model == NULL) 
+    {
+        qCritical() << "Attempted to use tree model when NULL.";
+        return;
+    }
+
     QStandardItem * item = model->itemFromIndex(proxy.mapToSource(index));
+
+    if (item == NULL)
+        return;
+
     QMap<QString, QVariant> data = item->data().toMap();
     QString filename = data["file"].toString();
     QString exact = data["exact"].toString();
 
     QFileInfo fi(filename);
     if (!fi.exists() || !fi.isFile())
+    {
+        qCritical() << "File in tree does not exist!";
         return;
+    }
 
     QFile f(filename);
 
@@ -71,7 +82,7 @@ void ProjectView::clicked(QModelIndex index)
     QTextDocument doc(text);
     int line = doc.find(exact).blockNumber();
 
-    qCDebug(logprojectview) << QString("(%1, %2):").arg(fi.fileName()).arg(line) << exact;
+    qDebug() << QString("(%1, %2):").arg(fi.fileName()).arg(line) << exact;
 
     emit showFileLine(filename, line);
 }
@@ -118,6 +129,11 @@ void ProjectView::expandChildren(const QModelIndex &index, bool expandOrCollapse
 
 void ProjectView::setModel(QStandardItemModel * model)
 {
+    if (model == NULL)
+    {
+        qCritical() << "Attempted to set NULL tree model.";
+        return;
+    }
     proxy.setSourceModel(model);
     ui.view->setModel(&proxy);
     ui.view->setExpanded(ui.view->model()->index(0,0), true);

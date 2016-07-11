@@ -12,9 +12,6 @@
 #include <QVariant>
 
 #include <QRegularExpression>
-#include <QLoggingCategory>
-
-Q_DECLARE_LOGGING_CATEGORY(logprojectparser)
 
 class ProjectParser
 {
