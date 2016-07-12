@@ -248,7 +248,7 @@ void ProjectParser::buildModel()
 
     QStandardItem * item = new QStandardItem(QIcon(":/icons/projectviewer/icon.png"),fi.fileName());
     QMap<QString, QVariant> data;
-    data["file"] = QFileInfo(filename).canonicalFilePath();
+    data["file"] = fi.canonicalFilePath();
     
     item->setData(QVariant(data));
     item->setEditable(false);
@@ -331,7 +331,8 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
             {
                 QString dep = match.pretty;
                 QMap<QString, QVariant> data;
-                QStandardItem * item = new QStandardItem(r.icon, dep);
+
+                QStandardItem * item = new QStandardItem(r.icon, QFileInfo(dep).fileName());
                 item->setForeground(QBrush(r.color));
                 item->setFont(font);
 
