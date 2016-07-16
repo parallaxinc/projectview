@@ -54,7 +54,7 @@ void ProjectView::clicked(QModelIndex index)
     const QStandardItemModel * model = (QStandardItemModel *) proxy.sourceModel();
     if (model == NULL) 
     {
-        qCritical() << "Attempted to use tree model when NULL.";
+        qCritical() << "Attempted to use NULL tree model.";
         return;
     }
 
@@ -82,7 +82,11 @@ void ProjectView::clicked(QModelIndex index)
     QTextDocument doc(text);
     int line = doc.find(exact).blockNumber();
 
-    qDebug() << QString("(%1, %2):").arg(fi.fileName()).arg(line) << exact;
+    qDebug() << "highlight:"
+             << qPrintable(QString("(%1, %2):")
+                                   .arg(fi.fileName())
+                                   .arg(line))
+             << exact;
 
     emit showFileLine(filename, line);
 }

@@ -4,7 +4,13 @@ TEMPLATE = lib
 TARGET = projectview
 DESTDIR = ../lib/
 
+UI_DIR = .ui/
+MOC_DIR = .moc/
+OBJECTS_DIR = .obj/
+RCC_DIR = .qrc/
+
 CONFIG += staticlib
+CONFIG += debug
 
 SOURCES += \
     projectparser.cpp \
