@@ -6,7 +6,7 @@
 #include <QSortFilterProxyModel>
 #include <QDebug>
 
-#include "ui_projectview.h"
+#include ".ui/ui_projectview.h"
 
 class ProjectFilter : public QSortFilterProxyModel 
 {

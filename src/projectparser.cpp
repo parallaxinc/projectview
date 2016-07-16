@@ -277,9 +277,9 @@ bool ProjectParser::detectCircularReference(QStandardItem * item)
                 (Qt::CaseSensitivity) (!caseInsensitive)
             ))
         {
-            qCritical() << "Circular dependency:\n";
-                           "  parent:" << parent->data().toMap()["file"].toString() << "\n"
-                           "    item:" << item->data().toMap()["file"].toString();
+            qCritical() << "Circular dependency:\n"
+                        << "  parent:" << parent->data().toMap()["file"].toString() << "\n"
+                        << "    item:" << item->data().toMap()["file"].toString();
 
             item->setForeground(QBrush(QColor("#FF0000")));
             item->parent()->setForeground(QBrush(QColor("#FF0000")));
