@@ -262,7 +262,6 @@ void ProjectParser::buildModel()
     item->setFont(rootfont);
 
     root->appendRow(item);
-
     appendModel(item, filename);
 }
 
@@ -353,8 +352,11 @@ void ProjectParser::appendModel(QStandardItem * parentItem, const QString & name
         }
     }
 
-    parentItem->appendRows(children);
-    parentItem->appendRows(items);
+    if (children.count() > 0)
+        parentItem->appendRows(children);
+
+    if (items.count() > 0)
+        parentItem->appendRows(items);
 
     foreach (QStandardItem * item, children)
     {
